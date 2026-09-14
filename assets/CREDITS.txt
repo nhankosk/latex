@@ -1,0 +1,6 @@
+Art: Kenney.nl. Isometric City, Isometric Buildings #1, Isometric Vehicles #1. CC0 1.0.
+Sources:
+https://opengameart.org/sites/default/files/isometricCity.zip
+https://opengameart.org/sites/default/files/Isometric%20Buildings.zip
+https://opengameart.org/sites/default/files/isometricVehicles.zip
+PixiJS 8.6.6: MIT, https://github.com/pixijs/pixijs
