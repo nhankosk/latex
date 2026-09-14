@@ -1,4 +1,4 @@
-name: Preparar e publicar apresentação
+name: Verificar apresentação
 on:
   push:
     branches: [main]
@@ -6,17 +6,12 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
-  pages: write
-  id-token: write
 concurrency:
   group: apresentacao
   cancel-in-progress: false
 jobs:
   site:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,10 +29,11 @@ jobs:
       - name: Verificar interface
         if: ${{ hashFiles('apresentacao/qa.cjs') != '' }}
         run: |
-          npm install --no-save playwright
+          npm install --no-save playwright@1.55.0
           npx playwright install --with-deps chromium
           node apresentacao/qa.cjs
       - name: Preservar aplicação pronta e imagens de verificação
+        if: ${{ always() && hashFiles('dist/index.html') != '' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -54,16 +50,3 @@ jobs:
             git -C ../publication commit -m "Atualiza aplicação e recursos verificados"
             git -C ../publication push origin HEAD:refs/heads/apresentacao-web
           fi
-      - name: Consultar configuração do GitHub Pages
-        id: pages
-        continue-on-error: true
-        uses: actions/configure-pages@v5
-      - name: Preparar publicação
-        if: ${{ steps.pages.outcome == 'success' && hashFiles('apresentacao/index.html') != '' }}
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - name: Publicar
-        id: deployment
-        if: ${{ steps.pages.outcome == 'success' && hashFiles('apresentacao/index.html') != '' }}
-        uses: actions/deploy-pages@v4
