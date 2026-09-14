@@ -19,6 +19,7 @@ const geneHTML = (route, options={}) => {
 function setPlaying(value){playing=value;renderButtons();}
 function renderButtons(){
   $('play-symbol').textContent=playing?'Ⅱ':'▶';
+  $('mobile-play').textContent=playing?'Ⅱ Pausar':routeType!=='current'||engine.done||mode==='didatico'?'▶ Animar':'▶ Iniciar';
   $('play-text').textContent=playing?'Pausar':routeType!=='current'||engine.done||mode==='didatico'?'Animar percurso':engine.generation===1?'Iniciar evolução':'Continuar evolução';
   $('status').className='status'+(engine.reached?' complete':playing?' running':'');
   $('status').textContent=engine.reached?'Ótimo encontrado':engine.exhausted?'Limite atingido':playing?'Em execução':engine.generation===1?'Pronto':'Pausado';
@@ -93,6 +94,7 @@ all('[data-mode]').forEach(b=>b.addEventListener('click',()=>{
 }));
 all('[data-route]').forEach(b=>b.addEventListener('click',()=>{routeType=b.dataset.route;progress=0;setPlaying(false);renderRoute();scene?.positionActor();}));
 $('play').addEventListener('click',()=>{if(ready)setPlaying(!playing);});
+$('mobile-play').addEventListener('click',()=>{if(ready)setPlaying(!playing);});
 $('reset').addEventListener('click',reset);
 $('next-step').addEventListener('click',nextStep);
 $('operator').addEventListener('change',()=>{opts.operator=$('operator').value;reset();});
@@ -262,7 +264,7 @@ try{
     }
     positionActor();
   });
-  ready=true;$('map-loading').hidden=true;
+  ready=true;$('map-loading').hidden=true;$('mobile-play').disabled=false;
 }catch(error){
   console.error('Falha ao carregar mapa:',error);
   $('map-loading').innerHTML='<div style="max-width:280px;padding:20px">Não foi possível carregar o cenário neste navegador. As rotas e os cálculos continuam disponíveis. <button class="secondary" onclick="location.reload()">Tentar novamente</button></div>';

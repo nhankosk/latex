@@ -50,6 +50,7 @@ async function run(){
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true,`Mobile overflow in ${tab}`);
   }
   await page.locator('nav [data-tab="experimento"]').click();await page.click('#reset');await page.click('[data-mode="automatico"]');await page.locator('.parameters summary').click();await page.evaluate(()=>window.scrollTo(0,0));
+  await page.click('#mobile-play');assert.equal(await page.evaluate(()=>window.__ROUTE_APP__.playing),true);await page.click('#mobile-play');assert.equal(await page.evaluate(()=>window.__ROUTE_APP__.playing),false);
   await page.screenshot({path:path.join(root,'qa','mobile.jpg'),quality:87,fullPage:true});
   assert.equal(errors.length,0,errors.join('\n'));
   console.log('Interface verificada: renderização 2D, animação, pausa, referências, etapas didáticas, população, parâmetros, exemplos e navegação nas seis áreas. Sem erros JavaScript ou transbordamento em 1440 px e 390 px.');
