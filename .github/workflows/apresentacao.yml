@@ -1,0 +1,69 @@
+name: Preparar e publicar apresentação
+on:
+  push:
+    branches: [main]
+    paths: ["apresentacao/**", ".github/workflows/apresentacao.yml"]
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: apresentacao
+  cancel-in-progress: false
+jobs:
+  site:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Conferir matemática
+        run: node apresentacao/test-engine.cjs
+      - name: Preparar arte e aplicação
+        run: |
+          python -m pip install Pillow
+          python apresentacao/build.py
+      - name: Verificar interface
+        if: ${{ hashFiles('apresentacao/qa.cjs') != '' }}
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+          node apresentacao/qa.cjs
+      - name: Preservar aplicação pronta e imagens de verificação
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code origin refs/heads/apresentacao-web; then
+            git fetch origin apresentacao-web
+            git worktree add ../publication FETCH_HEAD
+          else
+            git worktree add --detach ../publication
+            git -C ../publication switch --orphan publication-build
+          fi
+          cp -a dist/. ../publication/
+          git -C ../publication add .
+          if ! git -C ../publication diff --staged --quiet; then
+            git -C ../publication commit -m "Atualiza aplicação e recursos verificados"
+            git -C ../publication push origin HEAD:refs/heads/apresentacao-web
+          fi
+      - name: Consultar configuração do GitHub Pages
+        id: pages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+      - name: Preparar publicação
+        if: ${{ steps.pages.outcome == 'success' && hashFiles('apresentacao/index.html') != '' }}
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - name: Publicar
+        id: deployment
+        if: ${{ steps.pages.outcome == 'success' && hashFiles('apresentacao/index.html') != '' }}
+        uses: actions/deploy-pages@v4
