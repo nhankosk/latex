@@ -1,0 +1,35 @@
+{
+  "status": "passed",
+  "cases": 3,
+  "initialIndividuals": 10,
+  "viewports": [
+    1440,
+    390
+  ],
+  "checks": [
+    "exact costs",
+    "nearest costs",
+    "common base",
+    "ten moving agents",
+    "pause",
+    "individual selection",
+    "trails",
+    "grid",
+    "projections",
+    "distance tool",
+    "didactic phases",
+    "didactic to automatic continuity",
+    "automatic generations",
+    "elites",
+    "OX and PMX",
+    "parameter validation",
+    "population dialog",
+    "reset",
+    "fullscreen",
+    "six sections",
+    "article operators",
+    "route counter",
+    "mobile controls"
+  ],
+  "javascriptErrors": []
+}
