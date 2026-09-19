@@ -1,0 +1,6 @@
+{
+  "name": "rotas-artigo-jackson",
+  "private": true,
+  "scripts": {"dev": "vite", "test": "node apresentacao/test-engine.cjs", "build": "python apresentacao/build.py"},
+  "devDependencies": {"vite": "6.4.1"}
+}

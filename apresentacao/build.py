@@ -1,10 +1,17 @@
-import io,json,pathlib,re,shutil,urllib.request,zipfile,struct
+import io,json,pathlib,re,shutil,urllib.request,zipfile,struct,hashlib
 from PIL import Image,ImageDraw
 root=pathlib.Path(__file__).parent
 dest=pathlib.Path("dist")
 dest.mkdir(exist_ok=True)
 for p in root.iterdir():
     if p.suffix in (".html",".css",".js"): shutil.copy2(p,dest/p.name)
+shutil.copytree(root/"media",dest/"media",dirs_exist_ok=True)
+people=dest/"media"/"people.png"
+if not people.exists():
+    req=urllib.request.Request("https://opengameart.org/sites/default/files/people_0.png",headers={"User-Agent":"RouteLab-Education/1.0"})
+    with urllib.request.urlopen(req,timeout=90) as response: people.write_bytes(response.read())
+if hashlib.sha256(people.read_bytes()).hexdigest()!="d44e8918c54b968819c6aa34086362ee3fd55efc5d6769d3e374565869d9df54":
+    raise RuntimeError("O atlas Isometric People mudou; conferir a fonte antes de atualizar.")
 assets=dest/"assets";assets.mkdir(exist_ok=True)
 packs={
 "city":"https://opengameart.org/sites/default/files/isometricCity.zip",

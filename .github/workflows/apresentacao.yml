@@ -2,7 +2,7 @@ name: Verificar apresentação
 on:
   push:
     branches: [main]
-    paths: ["apresentacao/**", ".github/workflows/apresentacao.yml"]
+    paths: ["apresentacao/**", ".github/workflows/apresentacao.yml", "package.json", "package-lock.json", "vite.config.mjs"]
   workflow_dispatch:
 permissions:
   contents: write
