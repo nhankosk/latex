@@ -82,7 +82,7 @@ function drawRoute(){
  rows.forEach((p,i)=>{
   const selected=s.routeType!=='current'||p.id===s.selected.id,color=s.routeType==='exact'?'#147f7c':s.routeType==='nearest'?'#d48245':s.color(p),geometry=s.problem.geometry(p.route),vertices=geometry.vertices.map(v=>({...projection(v),at:v.at}));
   const g=new P.Graphics();trails.addChild(g);
-  // Les chemins partagés reçoivent de légers décalages d'écran, jamais dans le modèle.
+  // Separação visual de percursos coincidentes; as distâncias usam a geometria exata.
   const lane=s.allTrails&&s.routeType==='current'?(i-4.5)*.7:0;
   if(s.allTrails||selected){
    const stroke=(width,alpha,strokeColor)=>{vertices.forEach((v,j)=>{if(j)g.lineTo(v.x+lane,v.y+lane*.5);else g.moveTo(v.x+lane,v.y+lane*.5);});g.stroke({color:strokeColor,width,alpha,join:'round',cap:'round'});};
@@ -92,8 +92,9 @@ function drawRoute(){
   const carrier=new P.Container(),shadow=new P.Graphics().ellipse(0,0,s.problem.id==='robot'?8:12,5).fill({color,alpha:.45});
   const texture=s.problem.id==='school'?peopleTexture(i,0,0):s.problem.id==='city'?textures[cars[0]]:textures['media/robot.png'];
   const actor=new P.Sprite(texture);actor.anchor.set(.5,s.problem.id==='school'?.88:.5);actor.width=s.problem.id==='school'?42:s.problem.id==='city'?34:19;actor.scale.y=actor.scale.x;
-  const badge=new P.Graphics().roundRect(-11,-12,22,17,6).fill(color);badge.position.set(0,s.problem.id==='school'?-40:-22);
-  const idText=new P.Text({text:s.routeType==='current'?String(p.id):'R',style:{fontFamily:'DM Sans, sans-serif',fontSize:12,fontWeight:'700',fill:0xffffff}});idText.anchor.set(.5);idText.position.set(0,badge.y-3);
+  const label=s.routeType==='current'?String(p.id):'R',badgeWidth=Math.max(22,label.length*8+8);
+  const badge=new P.Graphics().roundRect(-badgeWidth/2,-12,badgeWidth,17,6).fill(color);badge.position.set(0,s.problem.id==='school'?-40:-22);
+  const idText=new P.Text({text:label,style:{fontFamily:'DM Sans, sans-serif',fontSize:12,fontWeight:'700',fill:s.problem.id==='robot'?0x102d41:0xffffff}});idText.anchor.set(.5);idText.position.set(0,badge.y-3);
   carrier.addChild(shadow,actor,badge,idText);actors.addChild(carrier);carrier.eventMode='none';
   entities.push({p,i,carrier,actor,shadow,geometry,vertices,max,selected,color,lane});
  });positionActors();
@@ -106,7 +107,7 @@ function positionActors(){
   const logicalA=e.geometry.vertices[k-1],logicalB=e.geometry.vertices[k],logical={x:logicalA.x+(logicalB.x-logicalA.x)*t,y:logicalA.y+(logicalB.y-logicalA.y)*t};
   const moving=s.playing&&distance<e.p.cost,angle=Math.atan2(b.y-a.y,b.x-a.x),atBase=distance===0||distance>=e.p.cost;
   // Um pequeno espalhamento torna visíveis os dez indivíduos reunidos na mesma base.
-  const spread=atBase?1:Math.max(0,1-distance/(s.problem.scale*1.4)),offsetX=((e.i%5)-2)*(s.problem.id==='robot'?5:14)*spread,offsetY=(Math.floor(e.i/5)-.5)*(s.problem.id==='robot'?7:17)*spread;
+  const spread=atBase?1:Math.max(0,1-distance/(s.problem.scale*1.4)),offsetX=((e.i%5)-2)*(s.problem.id==='robot'?24:14)*spread,offsetY=(Math.floor(e.i/5)-.5)*(s.problem.id==='robot'?26:17)*spread;
   e.carrier.position.set(x+offsetX+(!atBase?e.lane:0),y+offsetY+(!atBase?e.lane*.5:0));
   if(s.problem.id==='school'){
    const direction=b.y>=a.y?(b.x>=a.x?0:1):(b.x<a.x?2:3),frame=moving?1+(Math.floor(elapsed*10+e.i)%8):0;

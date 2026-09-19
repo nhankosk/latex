@@ -10,7 +10,8 @@ let isometric=true,showGrid=true,allTrails=true,activeView='experimento',ready=f
 const problem=()=>engine.problem;
 const visiblePopulation=()=>engine.population.slice(0,10).sort((a,b)=>a.slot-b.slot);
 const selectedRoute=()=>routeType==='exact'?problem().EXACT:routeType==='nearest'?problem().NEAREST:engine.population.find(p=>p.id===selectedId)||engine.best;
-const color=p=>palette[visiblePopulation().findIndex(a=>a.id===p.id)%10]||palette[0];
+const robotPalette=['#59adff','#f4798e','#53cfb1','#ffc96a','#bb95f2','#57d0e8','#ffad79','#c5da73','#ee91d4','#abc8dc'];
+const color=p=>(problem().id==='robot'?robotPalette:palette)[visiblePopulation().findIndex(a=>a.id===p.id)%10]||palette[0];
 const state=()=>({problem:problem(),population:visiblePopulation(),selected:selectedRoute(),routeType,progress,playing,isometric,showGrid,allTrails,palette,color});
 const geneHTML=(route,options={})=>{
  const r=options.base?[0,...route,0]:route,names=(options.school?L.CASES.school:problem()).names;
@@ -138,7 +139,7 @@ try{
  scene=await createRouteScene($('campus'),state,dt=>{
   if(!playing||activeView!=='experimento')return;
   progress=Math.min(1,progress+dt*Number($('speed').value)/12);
-  if(progress>=1){if(mode==='automatico'&&routeType==='current'&&!engine.done)commitGeneration();else setPlaying(false);}
+  if(progress>=1){if(mode==='automatico'&&routeType==='current'&&!engine.done)commitGeneration();else{setPlaying(false);updateFleet();}}
   uiClock+=dt;if(uiClock>.1){uiClock=0;updateFleet();}
  },id=>{$('distance-from').value=id;distance();});
  scene.resize();ready=true;$('map-loading').hidden=true;$('mobile-play').disabled=false;
