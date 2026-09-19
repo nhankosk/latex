@@ -107,7 +107,7 @@ function positionActors(){
   const logicalA=e.geometry.vertices[k-1],logicalB=e.geometry.vertices[k],logical={x:logicalA.x+(logicalB.x-logicalA.x)*t,y:logicalA.y+(logicalB.y-logicalA.y)*t};
   const moving=s.playing&&distance<e.p.cost,angle=Math.atan2(b.y-a.y,b.x-a.x),atBase=distance===0||distance>=e.p.cost;
   // Um pequeno espalhamento torna visíveis os dez indivíduos reunidos na mesma base.
-  const spread=atBase?1:Math.max(0,1-distance/(s.problem.scale*1.4)),offsetX=((e.i%5)-2)*(s.problem.id==='robot'?24:14)*spread,offsetY=(Math.floor(e.i/5)-.5)*(s.problem.id==='robot'?26:17)*spread;
+  const spread=atBase?1:Math.max(0,1-distance/(s.problem.scale*1.4)),offsetX=((e.i%5)-2)*(s.problem.id==='robot'?24:14)*spread,offsetY=(Math.floor(e.i/5)-.5)*(s.problem.id==='robot'?46:17)*spread;
   e.carrier.position.set(x+offsetX+(!atBase?e.lane:0),y+offsetY+(!atBase?e.lane*.5:0));
   if(s.problem.id==='school'){
    const direction=b.y>=a.y?(b.x>=a.x?0:1):(b.x<a.x?2:3),frame=moving?1+(Math.floor(elapsed*10+e.i)%8):0;

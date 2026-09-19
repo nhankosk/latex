@@ -21,9 +21,9 @@ function setPlaying(value){playing=value;renderButtons();}
 function renderButtons(){
  $('play-symbol').textContent=playing?'Ⅱ':'▶';
  $('mobile-play').textContent=playing?'Ⅱ Pausar':routeType!=='current'||engine.done||mode==='didatico'?'▶ Animar':'▶ Iniciar';
- $('play-text').textContent=playing?'Pausar':routeType!=='current'||engine.done||mode==='didatico'?'Animar percursos':engine.generation===1?'Iniciar evolução':'Continuar evolução';
+ $('play-text').textContent=playing?'Pausar':routeType!=='current'||engine.done||mode==='didatico'?'Animar percursos':engine.generation===1&&progress===0?'Iniciar evolução':'Continuar evolução';
  $('status').className='status'+(engine.reached?' complete':playing?' running':'');
- $('status').textContent=engine.reached?'Ótimo encontrado':engine.exhausted?'Limite atingido':playing?'Em execução':engine.generation===1?'Pronto':'Pausado';
+ $('status').textContent=engine.reached?'Ótimo encontrado':engine.exhausted?'Limite atingido':playing?'Em execução':engine.generation===1&&progress===0?'Pronto':'Pausado';
  $('mode-help').textContent=routeType!=='current'?'Uma rota de referência está em exibição. Volte a “Em evolução” para acompanhar a população.':mode==='automatico'?'Todos saem juntos. Ao terminarem os percursos, a próxima geração começa automaticamente.':'Anime a população e use “Próxima etapa” para explicar a geração seguinte. Depois, continue no automático.';
  $('next-step').disabled=engine.done&&phase!==4;
  $('next-step').textContent=engine.done&&phase!==4?'Execução concluída':phase===4?'Novo ciclo →':'Próxima etapa →';
